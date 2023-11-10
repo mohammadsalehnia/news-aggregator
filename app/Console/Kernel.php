@@ -12,9 +12,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('fetch:data:newsapi')->everyMinute();
-        $schedule->command('fetch:data:theguardian')->everyMinute();
-        $schedule->command('fetch:data:newyorktimes')->everyMinute();
+        $schedule->command('fetch:data:newsapi')->everyFiveMinutes();
+        $schedule->command('fetch:data:theguardian')->everyFifteenMinutes();
+        $schedule->command('fetch:data:newyorktimes')->everyTenMinutes();
 
     }
 
