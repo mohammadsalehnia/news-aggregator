@@ -27,32 +27,36 @@ class TheGuardianDataProvider implements ArticleDataProviderInterface
             // Other parameters as needed
         ];
 
-        // Make the request
-        $response = Http::get($this->baseUrl . '/search', $params);
+        try {
+            // Make the request
+            $response = Http::get($this->baseUrl . '/search', $params);
 
-        // Check if the request was successful (status code 200)
-        if ($response->successful()) {
-            // Parse and work with the response JSON
-            $articles = $response->json()['response']['results'];
-            foreach ($articles as $article) {
-                $articleData = [];
+            // Check if the request was successful (status code 200)
+            if ($response->successful()) {
+                // Parse and work with the response JSON
+                $articles = $response->json()['response']['results'];
+                foreach ($articles as $article) {
+                    $articleData = [];
 
-                $articleData['title'] = $article['webTitle'];
-                $articleData['date'] = $article['webPublicationDate'];
-                $articleData['source'] = $article['sectionName'];
-                $articleData['category'] = $article['pillarName'];
-                $articleData['author'] = $this->getAuthor($article);
-                $articleData['url'] = $article['webUrl'];
-                $articleData['image_url'] = $this->getImageUrl($article);
-                $articleData['content'] = $this->getContent($article);
+                    $articleData['title'] = $article['webTitle'];
+                    $articleData['date'] = $article['webPublicationDate'];
+                    $articleData['source'] = $article['sectionName'];
+                    $articleData['category'] = $article['pillarName'];
+                    $articleData['author'] = $this->getAuthor($article);
+                    $articleData['url'] = $article['webUrl'];
+                    $articleData['image_url'] = $this->getImageUrl($article);
+                    $articleData['content'] = $this->getContent($article);
 
-                if (!$this->articleRepository->existsByUrl($articleData['url'])) {
-                    $this->articleRepository->create($articleData);
+                    if (!$this->articleRepository->existsByUrl($articleData['url'])) {
+                        $this->articleRepository->create($articleData);
+                    }
+
                 }
-
+            } else {
+                Log::error($response->body());
             }
-        } else {
-            Log::error($response->body());
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
         }
     }
 

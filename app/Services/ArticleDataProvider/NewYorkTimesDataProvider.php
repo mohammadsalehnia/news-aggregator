@@ -32,32 +32,36 @@ class NewYorkTimesDataProvider implements ArticleDataProviderInterface
 
         ];
 
-        $response = Http::get($url, $params);
+        try {
+            $response = Http::get($url, $params);
 
-        // Check if the request was successful (status code 200)
-        if ($response->successful()) {
-            // Parse and work with the response JSON
-            $articles = $response->json()['response']['docs'];
-            foreach ($articles as $articleItem) {
+            // Check if the request was successful (status code 200)
+            if ($response->successful()) {
+                // Parse and work with the response JSON
+                $articles = $response->json()['response']['docs'];
+                foreach ($articles as $articleItem) {
 
-                $articleData = [];
-                $articleData['date'] = $articleItem['pub_date'];
-                $articleData['source'] = $articleItem['source'];
-                $articleData['category'] = $articleItem['section_name'];
-                $articleData['title'] = $articleItem['headline']['main'];
-                $articleData['author'] = $this->getAuthor($articleItem);
-                $articleData['url'] = $articleItem['web_url'];
-                $articleData['image_url'] = $this->getImageUrl($articleItem);
-                $articleData['content'] = $this->getContent($articleItem);
+                    $articleData = [];
+                    $articleData['date'] = $articleItem['pub_date'];
+                    $articleData['source'] = $articleItem['source'];
+                    $articleData['category'] = $articleItem['section_name'];
+                    $articleData['title'] = $articleItem['headline']['main'];
+                    $articleData['author'] = $this->getAuthor($articleItem);
+                    $articleData['url'] = $articleItem['web_url'];
+                    $articleData['image_url'] = $this->getImageUrl($articleItem);
+                    $articleData['content'] = $this->getContent($articleItem);
 
-                if (!$this->articleRepository->existsByUrl($articleData['url'])) {
-                    $this->articleRepository->create($articleData);
+                    if (!$this->articleRepository->existsByUrl($articleData['url'])) {
+                        $this->articleRepository->create($articleData);
+                    }
+
                 }
 
+            } else {
+                Log::error($response->body());
             }
-
-        } else {
-            Log::error($response->body());
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
         }
 
     }
