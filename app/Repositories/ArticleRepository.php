@@ -29,28 +29,24 @@ class ArticleRepository extends Repository
         $query = Article::query();
 
         if (isset($filters['title'])) {
-            $query->where('title', 'like', '%' . $filters['title'] . '%');
+            $query->titleLike($filters['title']);
         }
 
         if (isset($filters['from_date']) && isset($filters['to_date'])) {
-            $query->whereBetween('date', [$filters['from_date'], $filters['to_date']]);
+            $query->dateRange($filters['from_date'], $filters['to_date']);
         }
 
-        if (isset($filters['categories']) ) {
-
-            $query->whereIn('category', $filters['categories']);
+        if (isset($filters['categories'])) {
+            $query->categories($filters['categories']);
         }
 
         if (isset($filters['sources'])) {
-
-            $query->whereIn('source', $filters['sources']);
+            $query->sources($filters['sources']);
         }
 
         if (isset($filters['authors'])) {
-
-            $query->whereIn('author', $filters['authors']);
+            $query->authors($filters['authors']);
         }
-
 
         return $query->get();
     }
