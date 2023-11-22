@@ -9,13 +9,14 @@ use jcobhams\NewsApi\NewsApi;
 
 class NewsAPIDataProvider implements ArticleDataProviderInterface
 {
-    private string $apiKey = "5bca8a34ba77495c8acefae075b23024";
-
+    private string $apiKey;
     private ArticleRepository $articleRepository;
 
     public function __construct(ArticleRepository $articleRepository)
     {
         $this->articleRepository = $articleRepository;
+        $this->apiKey = env('NEWS_API_KEY');
+
     }
 
     public function fetchData(): void

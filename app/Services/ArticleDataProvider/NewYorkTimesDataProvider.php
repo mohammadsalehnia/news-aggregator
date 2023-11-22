@@ -9,14 +9,16 @@ use Illuminate\Support\Facades\Log;
 
 class NewYorkTimesDataProvider implements ArticleDataProviderInterface
 {
-    private string $apiKey = "v4H2REteYSUmUgYOWoCNPlUKVL1RqTN5";
-    private string $baseUrl = "https://api.nytimes.com/svc";
+    private string $apiKey;
+    private string $baseUrl;
 
     private ArticleRepository $articleRepository;
 
     public function __construct(ArticleRepository $articleRepository)
     {
         $this->articleRepository = $articleRepository;
+        $this->apiKey = env('NYT_API_KEY');
+        $this->baseUrl = env('NYT_API_BASE_URL');
     }
 
     public function fetchData(): void

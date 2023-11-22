@@ -9,14 +9,18 @@ use Illuminate\Support\Facades\Log;
 
 class TheGuardianDataProvider implements ArticleDataProviderInterface
 {
-    private string $apiKey = "b4e72857-e5a9-4c94-9a4f-51d182a5a960";
-    private string $baseUrl = "https://content.guardianapis.com";
+//    private string $apiKey = "b4e72857-e5a9-4c94-9a4f-51d182a5a960";
+//    private string $baseUrl = "https://content.guardianapis.com";
+    private string $apiKey;
+    private string $baseUrl;
 
     private ArticleRepository $articleRepository;
 
     public function __construct(ArticleRepository $articleRepository)
     {
         $this->articleRepository = $articleRepository;
+        $this->apiKey = env('GUARDIAN_API_KEY');
+        $this->baseUrl = env('GUARDIAN_API_BASE_URL');
     }
 
     public function fetchData(): void
