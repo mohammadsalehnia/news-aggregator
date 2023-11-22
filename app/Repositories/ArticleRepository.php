@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 use App\Models\Article;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class ArticleRepository extends Repository
 {
@@ -28,26 +30,29 @@ class ArticleRepository extends Repository
         // Build query based on the criteria
         $query = Article::query();
 
-        if (isset($filters['title'])) {
-            $query->titleLike($filters['title']);
-        }
-
-        if (isset($filters['from_date']) && isset($filters['to_date'])) {
-            $query->dateRange($filters['from_date'], $filters['to_date']);
-        }
-
-        if (isset($filters['categories'])) {
-            $query->categories($filters['categories']);
-        }
-
-        if (isset($filters['sources'])) {
-            $query->sources($filters['sources']);
-        }
-
-        if (isset($filters['authors'])) {
-            $query->authors($filters['authors']);
-        }
+        // Apply filters using Filter classes
+        $this->applyFilters($query, $filters);
 
         return $query->get();
     }
+
+    protected function applyFilters($query, $filters)
+    {
+        $filterNamespace = 'Filters';
+
+        $filterClasses = collect(File::allFiles(app_path($filterNamespace)))
+            ->map(function ($file) use ($filterNamespace) {
+                return  pathinfo($file->getPathname(), PATHINFO_FILENAME);
+            });
+        
+        foreach ($filters as $filterName => $value) {
+            $filterClassName = ucfirst(Str::camel($filterName)) . 'Filter';
+
+            if ($filterClasses->contains($filterClassName)) {
+                $filter = app()->make('App'.'\\'.'Filters'.'\\'.$filterClassName);
+                $filter->apply($query, $value);
+            }
+        }
+    }
+
 }
