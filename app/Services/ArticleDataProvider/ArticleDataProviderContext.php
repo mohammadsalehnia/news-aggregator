@@ -8,7 +8,7 @@ class ArticleDataProviderContext
 
     protected ArticleDataProviderInterface $provider;
 
-    public function setProvider(ArticleDataProviderInterface $provider)
+    public function setProvider(ArticleDataProviderInterface $provider): void
     {
         $this->provider = $provider;
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\SearchArticlesRequest;
 use App\Repositories\ArticleRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ArticlesController extends Controller
@@ -20,7 +21,7 @@ class ArticlesController extends Controller
     }
 
 
-    public function filter(SearchArticlesRequest $request)
+    public function filter(SearchArticlesRequest $request): JsonResponse
     {
         $articles = $this->articleRepository->searchFilters($request->all());
 
