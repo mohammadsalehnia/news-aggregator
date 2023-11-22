@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Repositories;
-
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 abstract class Repository
 {
     protected $model;
@@ -13,17 +14,17 @@ abstract class Repository
 
     abstract public function model(): string;
 
-    public function all()
+    public function all(): Collection
     {
         return $this->model->orderBy('id', 'desc')->get();
     }
 
-    public function create(array $data)
+    public function create(array $data): Model
     {
         return $this->model->create($data);
     }
 
-    public function exists($id)
+    public function exists($id): bool
     {
         return $this->model->where('id', $id)->exists();
     }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\v1\ArticlesController;
+use App\Http\Controllers\Api\v1\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,7 +16,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['prefix' => 'articles'], function () {
-    Route::post('/search', [ArticlesController::class, 'filter'])->name('articles.search');
 
+Route::post('/auth/register', [AuthController::class, 'register'])->name('auth.register');
+Route::post('/auth/login', [AuthController::class, 'login'])->name('auth.login');
+
+Route::middleware(['auth:api'])->group(function () {
+    Route::group(['prefix' => 'articles'], function () {
+        Route::post('/search', [ArticlesController::class, 'filter'])->name('articles.search');
+    });
 });
+

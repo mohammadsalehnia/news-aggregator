@@ -14,12 +14,7 @@ class ArticleRepository extends Repository
         return Article::class;
     }
 
-    public function findByUrl($url)
-    {
-        return $this->model->whereUrl($url);
-    }
-
-    public function existsByUrl($url)
+    public function existsByUrl($url): bool
     {
         return $this->model::where('url', $url)->exists();
     }
@@ -36,20 +31,20 @@ class ArticleRepository extends Repository
         return $query->get();
     }
 
-    protected function applyFilters($query, $filters)
+    protected function applyFilters($query, $filters): void
     {
         $filterNamespace = 'Filters';
 
         $filterClasses = collect(File::allFiles(app_path($filterNamespace)))
             ->map(function ($file) use ($filterNamespace) {
-                return  pathinfo($file->getPathname(), PATHINFO_FILENAME);
+                return pathinfo($file->getPathname(), PATHINFO_FILENAME);
             });
-        
+
         foreach ($filters as $filterName => $value) {
             $filterClassName = ucfirst(Str::camel($filterName)) . 'Filter';
 
             if ($filterClasses->contains($filterClassName)) {
-                $filter = app()->make('App'.'\\'.'Filters'.'\\'.$filterClassName);
+                $filter = app()->make('App' . '\\' . 'Filters' . '\\' . $filterClassName);
                 $filter->apply($query, $value);
             }
         }
