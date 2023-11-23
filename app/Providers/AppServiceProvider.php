@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
-use App\Services\ArticleDataProvider\ArticleDataProviderInterface;
-use App\Services\ArticleDataProvider\NewsAPIDataProvider;
+use App\Repositories\ArticleRepository;
+use App\Repositories\UserRepository;
+use App\Services\ArticleService;
+use App\Services\AuthService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +15,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(ArticleService::class, function ($app) {
+            return new ArticleService($app->make(ArticleRepository::class));
+        });
+
+        $this->app->bind(AuthService::class, function ($app) {
+            return new AuthService($app->make(UserRepository::class));
+        });
     }
 
     /**
