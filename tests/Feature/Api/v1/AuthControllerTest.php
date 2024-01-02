@@ -5,6 +5,7 @@ namespace Tests\Feature\Api\v1;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
@@ -13,6 +14,14 @@ class AuthControllerTest extends TestCase
     use RefreshDatabase;
     use WithFaker;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Artisan::call('passport:install --force');
+        $this->seed([
+            'UserSeeder',
+        ]);
+    }
 
     public function test_user_can_register(): void
     {
